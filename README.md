@@ -1,8 +1,5 @@
 # Kafka course practices
 
----
-
-
 
 ## Pre-requisites
 - Docker
