@@ -12,16 +12,4 @@
 docker compose up -d
 ```
 
-### Useful commands
-
-1. Use Kafka CLI on broker container
-```
-docker exec -it broker-local /bin/bash
-```
-
-2. List Kafka topics
-```
-kafka-topics --bootstrap-server localhost:9092 --list
-    
-```
 
