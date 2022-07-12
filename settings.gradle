@@ -1,3 +1,5 @@
 rootProject.name = 'kafka-course'
 
 include 'kafka-basics'
+include 'wikimedia-producer'
+
