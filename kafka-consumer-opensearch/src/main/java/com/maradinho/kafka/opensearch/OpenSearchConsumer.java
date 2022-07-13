@@ -159,8 +159,6 @@ public class OpenSearchConsumer {
                             .setHttpClientConfigCallback(
                                     httpAsyncClientBuilder -> httpAsyncClientBuilder.setDefaultCredentialsProvider(cp)
                                             .setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())));
-
-
         }
 
         return restHighLevelClient;
