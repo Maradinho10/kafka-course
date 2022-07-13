@@ -32,13 +32,21 @@ import java.util.Properties;
 
 public class OpenSearchConsumer {
 
+    public static final String OPEN_SEARCH_URL = "http://localhost:9200";
+
+    public static final String AUTO_OFFSET_RESET_CONFIG = "latest";
+
     private static final Logger log = LoggerFactory.getLogger(OpenSearchConsumer.class);
 
     private static final String WIKIMEDIA_INDEX = "wikimedia";
 
-    private static final String TOPIC = "wikimedia.recentchange";
+    private static final String WIKIMEDIA_RECENT_CHANGE_TOPIC = "wikimedia.recentchange";
 
     private static final Boolean AUTO_COMMIT_ENABLED = true;
+
+    private static final String BOOTSTRAP_SERVER_ADDRESS = "127.0.0.1:9092";
+
+    private static final String CONSUMER_GROUP_ID = "consumer-opensearch-demo";
 
     public static void main(String[] args) throws IOException {
         // Create OpenSearch client
@@ -50,7 +58,7 @@ public class OpenSearchConsumer {
         try (openSearchClient; consumer) {
             createIndexIfNotExists(openSearchClient);
 
-            consumer.subscribe(Collections.singleton(TOPIC));
+            consumer.subscribe(Collections.singleton(WIKIMEDIA_RECENT_CHANGE_TOPIC));
 
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(3000));
@@ -121,11 +129,11 @@ public class OpenSearchConsumer {
 
     private static KafkaConsumer<String, String> createKafkaConsumer() {
         Properties properties = new Properties();
-        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVER_ADDRESS);
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "consumer-opensearch-demo");
-        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, CONSUMER_GROUP_ID);
+        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, AUTO_OFFSET_RESET_CONFIG);
         properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, AUTO_COMMIT_ENABLED.toString());
 
         return new KafkaConsumer<>(properties);
@@ -133,11 +141,9 @@ public class OpenSearchConsumer {
 
 
     public static RestHighLevelClient createOpenSearchClient() {
-        String connString = "http://localhost:9200";
-
         // Builds URI from the connection string
         RestHighLevelClient restHighLevelClient;
-        URI connUri = URI.create(connString);
+        URI connUri = URI.create(OPEN_SEARCH_URL);
 
         // Extracts login information if it exists
         String userInfo = connUri.getUserInfo();
